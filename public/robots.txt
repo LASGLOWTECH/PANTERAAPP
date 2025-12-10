@@ -1,0 +1,11 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+
+# Host
+Host: https://pantherarestlounge.com
+
+# Sitemaps
+Sitemap: https://pantherarestlounge.com/sitemap.xml
