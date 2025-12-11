@@ -60,6 +60,7 @@ jobs:
           # REMOVED: password: ${{ secrets.SSH_PASSWORD }}
           # ADDED: Use the private key secret for authentication
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }} # <--- ADDED PASSPHRASE
           # REMOVED: port: ${{ secrets.SSH_PORT }} (Uses default 22)
           script: |
             # Navigate to the secure application directory
