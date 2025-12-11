@@ -21,12 +21,16 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      # ---- 3. Install Dependencies ----
+      # ---- 3. Clean previous build ----
+      - name: Clean Previous Build
+        run: rm -rf .next
+
+      # ---- 4. Install Dependencies ----
       - name: Install Dependencies
         run: npm install
 
-      # ---- 4. Build Next.js ----
-      - name: Build Next.js Application
+      # ---- 5. Build Next.js Application ----
+      - name: Build Next.js
         run: npm run build
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
@@ -34,35 +38,37 @@ jobs:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      # ---- 5. Copy Built Files to VPS ----
-      - name: Upload Production Build to VPS
+      # ---- 6. Verify Build Output ----
+      - name: Verify Build Output
+        run: |
+          if [ ! -d ".next" ]; then
+            echo ".next folder not found! Build failed."
+            exit 1
+          fi
+
+      # ---- 7. Upload Build to VPS ----
+      - name: Upload Production Build
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-
-          source: |
-            .next/
-            public/
-            package.json
-            next.config.js
+          source: ".next public package.json next.config.js"
           target: "/home/pantherarestlounge.com/"
 
-      # ---- 6. SSH Into VPS & Deploy ----
-      - name: Connect to VPS and Deploy
+      # ---- 8. SSH Into VPS & Deploy ----
+      - name: Deploy on VPS
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-
           script: |
             cd /home/pantherarestlounge.com/
 
-            # 1. Recreate ENV file
+            # Recreate .env file
             rm -f .env
             echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> .env
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
@@ -76,12 +82,12 @@ jobs:
             echo "WHATSAPP_TOKEN=${{ secrets.WHATSAPP_TOKEN }}" >> .env
             echo "CLIENT_WHATSAPP_NUMBER=${{ secrets.CLIENT_WHATSAPP_NUMBER }}" >> .env
 
-            # 2. Install server-side dependencies only
+            # Install production dependencies
             npm install --production
 
-            # 3. Restart PM2
+            # Restart PM2 with updated environment
             if pm2 describe panthera-app > /dev/null; then
-              pm2 reload panthera-app
+              pm2 reload panthera-app --update-env
             else
               pm2 start npm --name "panthera-app" -- start
             fi
