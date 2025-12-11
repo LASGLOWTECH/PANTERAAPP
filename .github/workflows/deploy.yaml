@@ -27,10 +27,12 @@ jobs:
       # ---- 3. Install dependencies ----
       - name: Install dependencies
         run: npm install
+        working-directory: my-next-app
 
       # ---- 4. Build Next.js ----
       - name: Build Next.js
         run: npm run build
+        working-directory: my-next-app
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
@@ -38,27 +40,27 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       # ---- 5. Verify build output ----
-      - name: Verify build output
+      - name: Debug build files
         run: |
-          if [ ! -d ".next" ]; then
-            echo ".next folder not found! Build failed."
-            exit 1
-          fi
-          ls -la .next
-          ls -la public
-          ls -la package.json
-          [ -f next.config.ts ] && echo "Found next.config.ts" || echo "No next.config.ts"
+          echo "Listing project folder:"
+          ls -la my-next-app
+          echo "Listing .next folder:"
+          ls -la my-next-app/.next
+          echo "Listing public folder:"
+          ls -la my-next-app/public
+          ls -la my-next-app/package.json
+          [ -f my-next-app/next.config.ts ] && echo "Found next.config.ts" || echo "No next.config.ts"
 
-      # ---- 6. Upload build to VPS ----
-      - name: Upload build to VPS
+      # ---- 6. Upload build to CyberPanel public_html ----
+      - name: Upload build to VPS public_html
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          source: ".next public package.json next.config.ts"
-          target: "/home/pantherarestlounge.com/"
+          source: "my-next-app/.next my-next-app/public my-next-app/package.json"
+          target: "/home/pantherarestlounge.com/public_html/"
 
       # ---- 7. SSH into VPS & deploy ----
       - name: Deploy on VPS
@@ -69,7 +71,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd /home/pantherarestlounge.com/
+            cd /home/pantherarestlounge.com/public_html/
 
             # Recreate .env file
             rm -f .env
