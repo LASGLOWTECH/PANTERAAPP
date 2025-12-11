@@ -8,13 +8,12 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     defaults:
       run:
         shell: bash
 
     steps:
-      # ---- 1. Checkout Code ----
+      # ---- 1. Checkout code ----
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -25,15 +24,11 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      # ---- 3. Clean previous build ----
-      - name: Clean previous build
-        run: rm -rf .next
-
-      # ---- 4. Install Dependencies ----
+      # ---- 3. Install dependencies ----
       - name: Install dependencies
         run: npm install
 
-      # ---- 5. Build Next.js ----
+      # ---- 4. Build Next.js ----
       - name: Build Next.js
         run: npm run build
         env:
@@ -42,27 +37,19 @@ jobs:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      # ---- 6. Debug build output ----
-      - name: Debug build files
-        run: |
-          echo "Listing repo root:"
-          ls -la
-          echo "Listing .next folder:"
-          ls -la .next
-          echo "Listing public folder:"
-          ls -la public
-          echo "Checking package.json and next.config.ts:"
-          ls -la package.json next.config.ts
-
-      # ---- 7. Verify build output ----
+      # ---- 5. Verify build output ----
       - name: Verify build output
         run: |
           if [ ! -d ".next" ]; then
             echo ".next folder not found! Build failed."
             exit 1
           fi
+          ls -la .next
+          ls -la public
+          ls -la package.json
+          [ -f next.config.ts ] && echo "Found next.config.ts" || echo "No next.config.ts"
 
-      # ---- 8. Upload build to VPS ----
+      # ---- 6. Upload build to VPS ----
       - name: Upload build to VPS
         uses: appleboy/scp-action@master
         with:
@@ -73,7 +60,7 @@ jobs:
           source: ".next public package.json next.config.ts"
           target: "/home/pantherarestlounge.com/"
 
-      # ---- 9. SSH into VPS & deploy ----
+      # ---- 7. SSH into VPS & deploy ----
       - name: Deploy on VPS
         uses: appleboy/ssh-action@v1.0.0
         with:
