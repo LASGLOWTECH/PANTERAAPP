@@ -9,6 +9,10 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        shell: bash
+
     steps:
       # ---- 1. Checkout Code ----
       - name: Checkout Code
@@ -38,17 +42,27 @@ jobs:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      # ---- 6. Verify build output ----
+      # ---- 6. Debug build output (optional) ----
+      - name: Debug build files
+        run: |
+          echo "Listing repo root:"
+          ls -la
+          echo "Listing .next folder:"
+          ls -la .next
+          echo "Listing public folder:"
+          ls -la public
+          echo "Checking package.json and next.config.js:"
+          ls -la package.json next.config.js
+
+      # ---- 7. Verify build output ----
       - name: Verify build output
         run: |
           if [ ! -d ".next" ]; then
             echo ".next folder not found! Build failed."
             exit 1
           fi
-          echo "Build output exists:"
-          ls -la .next
 
-      # ---- 7. Upload build to VPS ----
+      # ---- 8. Upload build to VPS ----
       - name: Upload build to VPS
         uses: appleboy/scp-action@master
         with:
@@ -59,7 +73,7 @@ jobs:
           source: ".next public package.json next.config.js"
           target: "/home/pantherarestlounge.com/"
 
-      # ---- 8. SSH into VPS & deploy ----
+      # ---- 9. SSH into VPS & deploy ----
       - name: Deploy on VPS
         uses: appleboy/ssh-action@v1.0.0
         with:
