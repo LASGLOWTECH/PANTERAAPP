@@ -42,7 +42,7 @@ jobs:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      # ---- 6. Debug build output (optional) ----
+      # ---- 6. Debug build output ----
       - name: Debug build files
         run: |
           echo "Listing repo root:"
@@ -51,8 +51,8 @@ jobs:
           ls -la .next
           echo "Listing public folder:"
           ls -la public
-          echo "Checking package.json and next.config.js:"
-          ls -la package.json next.config.js
+          echo "Checking package.json and next.config.ts:"
+          ls -la package.json next.config.ts
 
       # ---- 7. Verify build output ----
       - name: Verify build output
@@ -70,7 +70,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          source: ".next public package.json next.config.js"
+          source: ".next public package.json next.config.ts"
           target: "/home/pantherarestlounge.com/"
 
       # ---- 9. SSH into VPS & deploy ----
