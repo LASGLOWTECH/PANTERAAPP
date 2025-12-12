@@ -49,7 +49,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }} # <--- ADD THIS LINE
           # REMOVED: port: ${{ secrets.SSH_PORT }} (Uses default 22)
-          source: ".next,public,package.json,package-lock.json,app,models,components,lib,utils,styles,next.config.ts"
+          source: ".next,public,package.json,package-lock.json,app,models,components,lib,utils,styles,next.config.ts,tsconfig.json"
           target: "/home/pantherarestlounge.com/pantheraapp/"
           recursive: true
 
