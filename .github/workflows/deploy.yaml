@@ -50,23 +50,23 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }} # <--- ADD THIS LINE
           # REMOVED: port: ${{ secrets.SSH_PORT }} (Uses default 22)
           source: ".next,public,package.json,package-lock.json,pages,components,lib,utils,styles,next.config.ts"
-          target: "/home/pantherarestlounge.com/panteraapp/"
+          target: "/home/pantherarestlounge.com/pantheraapp/"
+          recursive: true
 
       # ---- 6. SSH into VPS & Final Deployment Steps (USING SSH KEY) ----
-      - name: Deploy and Restart PM2 on VPS
-        uses: appleboy/ssh-action@v1.0.0
+      - name: Rebuild & Restart pm2 on VPS
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
-          # REMOVED: password: ${{ secrets.SSH_PASSWORD }}
-          # ADDED: Use the private key secret for authentication
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }} # <--- ADDED PASSPHRASE
-          # REMOVED: port: ${{ secrets.SSH_PORT }} (Uses default 22)
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
-            # Navigate to the secure application directory
-            DEPLOY_PATH="/home/pantherarestlounge.com/panteraapp"
-            cd $DEPLOY_PATH
+            cd /home/pantherarestlounge.com/pantheraapp
+            npm install
+            npm run build
+            pm2 restart panthera-app
 
             # 6.1 Recreate .env file securely outside of public_html
             rm -f .env
