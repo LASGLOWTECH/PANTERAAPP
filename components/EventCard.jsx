@@ -27,7 +27,7 @@ const EventCard = ({ title, description, date, image }) => {
         </div>
       )}
 
-      {/* 📰 Content */}
+      
       <div className="p-6 text-white">
         
         {/* Title */}

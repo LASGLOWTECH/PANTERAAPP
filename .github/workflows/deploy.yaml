@@ -50,7 +50,7 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }} # <--- ADD THIS LINE
           # REMOVED: port: ${{ secrets.SSH_PORT }} (Uses default 22)
           source: ".next,public,package.json,package-lock.json,app,models,components,lib,utils,styles,next-sitemap.config.js,next.config.ts,tsconfig.json"
-          target: "/home/pantherarestlounge.com/pantheraapp/"
+          target: "/home/pantherarestlounge.com/public_html/pantheraapp/"
           recursive: true
 
       # ---- 6. SSH into VPS & Final Deployment Steps (USING SSH KEY) ----
@@ -63,7 +63,7 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd /home/pantherarestlounge.com/pantheraapp
+            cd /home/pantherarestlounge.com/public_html/pantheraapp
             npm install
             npm run build
             pm2 restart panthera-app
