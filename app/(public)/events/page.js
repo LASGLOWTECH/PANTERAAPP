@@ -266,13 +266,13 @@ export default function EventsPage() {
                   <h2 className="text-2xl font-bold text-white mb-3">{event.title}</h2>
                   <div className="flex items-center gap-2 text-gray-300 mb-2">
                     <FaRegCalendarAlt />
-                    {dateObj.toLocaleString("en-US", {
+                    {dateObj.toLocaleString("en-NG", {
+                      timeZone: "Africa/Lagos",
                       weekday: "long",
                       year: "numeric",
                       month: "long",
                       day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
+                    
                     })}
                   </div>
 

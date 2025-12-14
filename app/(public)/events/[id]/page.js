@@ -93,15 +93,15 @@ export default function SingleEventPage() {
 
           {dateObj && (
             <div className="flex items-center gap-2 text-gray-300 mb-5">
-              <FaRegCalendarAlt />
+              <FaRegCalendarAlt className="fill-gold" />
               <span>
-                {dateObj.toLocaleString("en-US", {
+                {dateObj.toLocaleString("en-NG", {
+                 timeZone: "Africa/Lagos",
                   weekday: "long",
                   month: "long",
                   day: "numeric",
                   year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
+                  
                 })}
               </span>
             </div>
