@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import Link from "next/link";
-
+import Image from "next/image";
 export default function SingleEventPage() {
   const params = useParams();
   const id = params?.id;
@@ -33,18 +33,18 @@ export default function SingleEventPage() {
       }
     };
 
-const fetchOthers = async () => {
-  const res = await fetch(`/api/events`);
-  const data = await res.json(); 
+    const fetchOthers = async () => {
+      const res = await fetch(`/api/events`);
+      const data = await res.json();
 
-  // data IS THE ARRAY
-  const list = Array.isArray(data) ? data : data.events || [];
+      // data IS THE ARRAY
+      const list = Array.isArray(data) ? data : data.events || [];
 
-  // Filter out the current event
-  const filtered = list.filter((e) => String(e._id) !== String(id));
+      // Filter out the current event
+      const filtered = list.filter((e) => String(e._id) !== String(id));
 
-  setOtherEvents(filtered);
-};
+      setOtherEvents(filtered);
+    };
 
 
 
@@ -73,10 +73,10 @@ const fetchOthers = async () => {
 
   return (
     <div className="min-h-screen bg-black text-white pt-32   ">
-      
+
       {/* TOP SECTION — 2 COLUMN MODERN LAYOUT */}
       <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-4 gap-10">
-        
+
         {/* LEFT — EVENT CONTENT */}
         <div className="lg:col-span-2 pt-6">
           <Link href="/events" className="text-sm text-gray-400 hover:text-gold">
@@ -121,20 +121,19 @@ const fetchOthers = async () => {
         {/* RIGHT — LARGE EVENT IMAGE */}
         <div className="lg:col-span-2">
           <div className="w-full h-full rounded-lg overflow-hidden shadow-lg">
-            <img
-              src={
-                event.image.startsWith("/") 
-                  ? event.image 
-                  : `/uploads/${event.image}`
-              }
-              className="w-full  h-full object-cover"
+            < img
+              src={event.image}          // use the full Cloudinary URL directly
+              className="w-full h-96 object-cover rounded"
               alt={event.title}
               loading="lazy"
+              width={600}
+              height={400}
+              style={{ objectFit: "cover" }}
             />
           </div>
         </div>
       </div>
-<hr className="my-6"></hr>
+      <hr className="my-6"></hr>
 
       {/* OTHER EVENTS SECTION */}
       <div className="container mx-auto px-4 mt-16 py-10">
