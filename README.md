@@ -177,3 +177,6 @@ If you want, I can **also add a “Screenshots & GIF section” with sample imag
 
 Do you want me to do that next?
 ```
+
+
+<!-- Security scan triggered at 2026-09-02 07:09:16 -->
